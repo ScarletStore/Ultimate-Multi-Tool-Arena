@@ -3,95 +3,178 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Calculadora - Ultimate Multi-Tool Arena</title>
+  <title>Calculadora Matemática - Ultimate Multi-Tool Arena</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <!-- Particles.js CDN -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Press Start 2P', monospace;
       background-color: #121212;
       color: #e0e0e0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .container {
+      background: rgba(34, 34, 34, 0.9);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.7);
       text-align: center;
-      padding: 20px;
+      max-width: 400px;
+      width: 90%;
+      z-index: 1;
     }
-    .container { max-width: 400px; margin: auto; }
-    .calc-display {
-      background: #fff;
-      color: #333;
-      padding: 10px;
-      font-size: 2rem;
-      border-radius: 5px;
-      text-align: right;
-      margin-bottom: 10px;
-      min-height: 50px;
-    }
-    .calc-buttons button, a {
-      padding: 10px 15px;
-      margin: 5px;
+    button, input {
+      padding: 10px 20px;
       background: #6200ea;
       border: none;
       border-radius: 5px;
       color: #fff;
-      font-size: 1rem;
+      margin: 10px 5px;
       cursor: pointer;
       transition: background 0.3s;
+      font-size: 1rem;
+    }
+    button:hover { background: #3700b3; }
+    input {
+      width: 80%;
+      margin: 10px 0;
+      text-align: center;
+    }
+    .hidden { display: none; }
+    a {
       text-decoration: none;
+      color: #fff;
+      background: #6200ea;
+      padding: 10px 20px;
+      border-radius: 5px;
+      transition: background 0.3s;
+      display: inline-block;
+      margin-top: 20px;
     }
-    .calc-buttons button:hover, a:hover { background: #3700b3; }
-    @media(max-width: 480px) {
-      .calc-display { font-size: 1.5rem; }
-      .calc-buttons button, a { padding: 8px 12px; }
-    }
+    a:hover { background: #3700b3; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Calculadora</h1>
-    <div id="calcDisplay" class="calc-display">0</div>
-    <div class="calc-buttons">
-      <button onclick="calcInput('7')">7</button>
-      <button onclick="calcInput('8')">8</button>
-      <button onclick="calcInput('9')">9</button>
-      <button onclick="calcInput('/')">/</button>
+  <div id="particles-js"></div>
+  <div class="container" id="calcContainer">
+    <h1>Calculadora Matemática</h1>
+    <p id="usageInfo"></p>
+    <!-- Inicialmente, exibe a lâmpada para acionar a interface -->
+    <div id="initialPrompt">
+      <p>Clique na lâmpada para receber sua pergunta.</p>
+      <button id="lampButton" onclick="openCalculator()">💡</button>
+    </div>
+    <!-- Seção da pergunta (oculta inicialmente) -->
+    <div id="questionSection" class="hidden">
+      <p id="mathQuestion"></p>
+      <input type="text" id="answerInput" placeholder="Digite sua resposta">
       <br>
-      <button onclick="calcInput('4')">4</button>
-      <button onclick="calcInput('5')">5</button>
-      <button onclick="calcInput('6')">6</button>
-      <button onclick="calcInput('*')">*</button>
-      <br>
-      <button onclick="calcInput('1')">1</button>
-      <button onclick="calcInput('2')">2</button>
-      <button onclick="calcInput('3')">3</button>
-      <button onclick="calcInput('-')">-</button>
-      <br>
-      <button onclick="calcInput('0')">0</button>
-      <button onclick="calcInput('.')">.</button>
-      <button onclick="calculateResult()">=</button>
-      <button onclick="calcInput('+')">+</button>
-      <br>
-      <button onclick="clearCalc()" style="width:100%; background: #3700b3;">Limpar</button>
+      <button onclick="checkAnswer()">Verificar Resposta</button>
+      <p id="mathResult"></p>
+      <button id="nextButton" onclick="nextQuestion()" class="hidden">Próxima Pergunta</button>
     </div>
     <br>
     <a href="index.html">Voltar ao Menu</a>
   </div>
+  
   <script>
-    function calcInput(value) {
-      const display = document.getElementById("calcDisplay");
-      if(display.textContent === "0"){
-        display.textContent = value;
+    // Inicialização do particles.js
+    particlesJS("particles-js", {
+      "particles": {
+        "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+        "color": { "value": "#ffffff" },
+        "shape": { "type": "circle" },
+        "opacity": { "value": 0.5 },
+        "size": { "value": 3, "random": true },
+        "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.4, "width": 1 },
+        "move": { "enable": true, "speed": 4 }
+      },
+      "interactivity": {
+        "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" } },
+        "modes": { "repulse": { "distance": 100 }, "push": { "particles_nb": 4 } }
+      },
+      "retina_detect": true
+    });
+    
+    // Controle do uso da calculadora (limite 3 vezes)
+    let usageCount = localStorage.getItem("calcUsage") ? parseInt(localStorage.getItem("calcUsage")) : 0;
+    const maxUsage = 3;
+    
+    function updateUsageInfo() {
+      document.getElementById("usageInfo").innerText = `Você usou a calculadora ${usageCount} de ${maxUsage} vezes.`;
+    }
+    
+    updateUsageInfo();
+    
+    // Função para gerar uma pergunta matemática (soma de dois números entre 1 e 20)
+    function generateQuestion() {
+      const a = Math.floor(Math.random() * 20) + 1;
+      const b = Math.floor(Math.random() * 20) + 1;
+      return {
+        question: `Quanto é ${a} + ${b}?`,
+        answer: (a + b).toString(),
+        hint: (a + b).toString().charAt(0)  // Dica: primeiro dígito
+      };
+    }
+    
+    let currentQuestionData;
+    
+    // Quando o usuário clica na lâmpada, abre a calculadora (quiz)
+    function openCalculator() {
+      if (usageCount >= maxUsage) {
+        alert("Você já usou a calculadora 3 vezes. Use com sabedoria!");
+        return;
+      }
+      usageCount++;
+      localStorage.setItem("calcUsage", usageCount);
+      updateUsageInfo();
+      document.getElementById("initialPrompt").classList.add("hidden");
+      document.getElementById("questionSection").classList.remove("hidden");
+      currentQuestionData = generateQuestion();
+      document.getElementById("mathQuestion").innerText = currentQuestionData.question;
+      document.getElementById("answerInput").value = "";
+      document.getElementById("mathResult").innerText = "";
+      document.getElementById("nextButton").classList.add("hidden");
+    }
+    
+    // O usuário insere a resposta e clica para verificar
+    function checkAnswer() {
+      const userAnswer = document.getElementById("answerInput").value.trim();
+      if (userAnswer === "") {
+        alert("Por favor, digite sua resposta.");
+        return;
+      }
+      // Aqui a resposta não é revelada automaticamente; apenas uma mensagem de acerto ou erro
+      if (userAnswer === currentQuestionData.answer) {
+        document.getElementById("mathResult").innerText = "Resposta correta!";
+        document.getElementById("mathResult").style.color = "lightgreen";
       } else {
-        display.textContent += value;
+        document.getElementById("mathResult").innerText = "Resposta errada! Tente novamente.";
+        document.getElementById("mathResult").style.color = "tomato";
       }
+      document.getElementById("nextButton").classList.remove("hidden");
     }
-    function calculateResult() {
-      const display = document.getElementById("calcDisplay");
-      try {
-        display.textContent = eval(display.textContent);
-      } catch(e) {
-        display.textContent = "Erro";
-      }
-    }
-    function clearCalc() {
-      document.getElementById("calcDisplay").textContent = "0";
+    
+    // Gera a próxima pergunta (a "IA" simula novas perguntas dinamicamente)
+    function nextQuestion() {
+      currentQuestionData = generateQuestion();
+      document.getElementById("mathQuestion").innerText = currentQuestionData.question;
+      document.getElementById("answerInput").value = "";
+      document.getElementById("mathResult").innerText = "";
+      document.getElementById("nextButton").classList.add("hidden");
     }
   </script>
 </body>

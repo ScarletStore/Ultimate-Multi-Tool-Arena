@@ -24,6 +24,8 @@
       padding: 10px; 
       border-radius: 5px; 
       transition: background 0.3s; 
+      display: inline-block;
+      margin-top: 20px;
     }
     a:hover { background: #3700b3; }
     button { 
@@ -52,42 +54,28 @@
     <a href="index.html">Voltar ao Menu</a>
   </div>
   <script>
+    // Array com 20 perguntas bíblicas
     const quizData = [
-      {
-        question: "Qual é o primeiro livro da Bíblia?",
-        options: ["Gênesis", "Êxodo", "Levítico", "Números"],
-        answer: "Gênesis"
-      },
-      {
-        question: "Quem construiu a Arca?",
-        options: ["Abraão", "Moisés", "Noé", "Davi"],
-        answer: "Noé"
-      },
-      {
-        question: "Qual profeta foi engolido por um grande peixe?",
-        options: ["Elias", "Jonas", "Isaías", "Jeremias"],
-        answer: "Jonas"
-      },
-      {
-        question: "Quem foi o rei sábio que escreveu Provérbios?",
-        options: ["Salomão", "Saul", "Josias", "Ezequias"],
-        answer: "Salomão"
-      },
-      {
-        question: "Qual é o último livro da Bíblia?",
-        options: ["Apocalipse", "Daniel", "Atos", "Revelação"],
-        answer: "Apocalipse"
-      },
-      {
-        question: "Quem liderou os israelitas na conquista de Canaã?",
-        options: ["Josué", "Gideão", "Samuel", "Saul"],
-        answer: "Josué"
-      },
-      {
-        question: "Qual discípulo negou Jesus três vezes?",
-        options: ["Pedro", "João", "Tiago", "André"],
-        answer: "Pedro"
-      }
+      { question: "Qual é o primeiro livro da Bíblia?", options: ["Gênesis", "Êxodo", "Levítico", "Números"], answer: "Gênesis" },
+      { question: "Quem construiu a Arca?", options: ["Abraão", "Moisés", "Noé", "Davi"], answer: "Noé" },
+      { question: "Qual profeta foi engolido por um grande peixe?", options: ["Elias", "Jonas", "Isaías", "Jeremias"], answer: "Jonas" },
+      { question: "Quem foi o rei sábio que escreveu Provérbios?", options: ["Salomão", "Saul", "Josias", "Ezequias"], answer: "Salomão" },
+      { question: "Qual é o último livro da Bíblia?", options: ["Apocalipse", "Daniel", "Atos", "Revelação"], answer: "Apocalipse" },
+      { question: "Quem liderou os israelitas na conquista de Canaã?", options: ["Josué", "Gideão", "Samuel", "Saul"], answer: "Josué" },
+      { question: "Qual discípulo negou Jesus três vezes?", options: ["Pedro", "João", "Tiago", "André"], answer: "Pedro" },
+      { question: "Qual livro poético fala sobre a vaidade?", options: ["Eclesiastes", "Salmos", "Cântico dos Cânticos", "Provérbios"], answer: "Eclesiastes" },
+      { question: "Quem desafiou os profetas de Baal no Monte Carmelo?", options: ["Elias", "Eliseu", "Isaías", "Jeremias"], answer: "Elias" },
+      { question: "Qual o nome da esposa de Abraão?", options: ["Sara", "Rebeca", "Raquel", "Lia"], answer: "Sara" },
+      { question: "Quem foi lançado na cova dos leões?", options: ["Daniel", "Elias", "Moisés", "Davi"], answer: "Daniel" },
+      { question: "Qual profeta anunciou o nascimento de Jesus?", options: ["Isaías", "Miquéias", "Jeremias", "Ezequiel"], answer: "Miquéias" },
+      { question: "Quem foi o pai de João Batista?", options: ["Zacarias", "Josias", "Moisés", "Abel"], answer: "Zacarias" },
+      { question: "Qual livro contém os Salmos?", options: ["Salmos", "Provérbios", "Eclesiastes", "Cânticos"], answer: "Salmos" },
+      { question: "Quem foi o discípulo conhecido como o \"discípulo amado\"?", options: ["Pedro", "João", "Tiago", "André"], answer: "João" },
+      { question: "Quem traiu Jesus por 30 moedas de prata?", options: ["Judas", "Simão", "Tiago", "Pedro"], answer: "Judas" },
+      { question: "Qual o nome do monte onde Jesus orou antes de ser preso?", options: ["Monte das Oliveiras", "Monte Sinai", "Monte Carmelo", "Monte Tabor"], answer: "Monte das Oliveiras" },
+      { question: "Quem foi o profeta que viu a visão dos ossos secos?", options: ["Ezequiel", "Isaías", "Jeremias", "Daniel"], answer: "Ezequiel" },
+      { question: "Qual é o livro que narra a história de Rute?", options: ["Rute", "Juízes", "Samuel", "Crônicas"], answer: "Rute" },
+      { question: "Quem sucedeu Moisés na liderança dos israelitas?", options: ["Josué", "Calebe", "Samuel", "Davi"], answer: "Josué" }
     ];
     
     let currentQuestion = 0;
@@ -110,7 +98,7 @@
     
     function selectOption(selected) {
       const correct = quizData[currentQuestion].answer;
-      if(selected === correct) {
+      if (selected === correct) {
         score++;
         document.getElementById("result").innerText = "Resposta correta!";
         document.getElementById("result").style.color = "lightgreen";
@@ -118,24 +106,21 @@
         document.getElementById("result").innerText = "Resposta errada! A resposta correta é: " + correct;
         document.getElementById("result").style.color = "tomato";
       }
-      // Desabilitar os botões após a seleção
+      // Desabilitar botões após a seleção
       const options = document.getElementById("options").children;
-      for(let btn of options) {
-        btn.disabled = true;
-      }
+      for (let btn of options) { btn.disabled = true; }
       document.getElementById("nextButton").style.display = "block";
     }
     
     function nextQuestion() {
       currentQuestion++;
-      if(currentQuestion < quizData.length) {
+      if (currentQuestion < quizData.length) {
         loadQuestion();
       } else {
         document.getElementById("quizContainer").innerHTML = "<h2>Quiz Finalizado!</h2><p>Sua pontuação: " + score + " de " + quizData.length + "</p>";
       }
     }
     
-    // Inicia o quiz
     loadQuestion();
   </script>
 </body>
