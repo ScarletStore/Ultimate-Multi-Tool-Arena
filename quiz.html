@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quiz Bíblico - Ultimate Multi-Tool Arena</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body { 
+      font-family: 'Press Start 2P', monospace; 
+      background-color: #121212; 
+      color: #e0e0e0; 
+      text-align: center; 
+      padding: 20px; 
+    }
+    .container { 
+      max-width: 800px; 
+      margin: auto; 
+    }
+    a { 
+      text-decoration: none; 
+      color: #fff; 
+      background: #6200ea; 
+      padding: 10px; 
+      border-radius: 5px; 
+      transition: background 0.3s; 
+    }
+    a:hover { background: #3700b3; }
+    button { 
+      padding: 10px 20px; 
+      background: #6200ea; 
+      border: none; 
+      border-radius: 5px; 
+      color: #fff; 
+      margin: 10px; 
+      cursor: pointer; 
+      transition: background 0.3s; 
+    }
+    button:hover { background: #3700b3; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Quiz Bíblico</h1>
+    <div id="quizContainer">
+      <p id="question">Pergunta será exibida aqui</p>
+      <div id="options"></div>
+      <button id="nextButton" onclick="nextQuestion()" style="display:none;">Próxima</button>
+    </div>
+    <p id="result"></p>
+    <br>
+    <a href="index.html">Voltar ao Menu</a>
+  </div>
+  <script>
+    const quizData = [
+      {
+        question: "Qual é o primeiro livro da Bíblia?",
+        options: ["Gênesis", "Êxodo", "Levítico", "Números"],
+        answer: "Gênesis"
+      },
+      {
+        question: "Quem construiu a Arca?",
+        options: ["Abraão", "Moisés", "Noé", "Davi"],
+        answer: "Noé"
+      },
+      {
+        question: "Qual profeta foi engolido por um grande peixe?",
+        options: ["Elias", "Jonas", "Isaías", "Jeremias"],
+        answer: "Jonas"
+      },
+      {
+        question: "Quem foi o rei sábio que escreveu Provérbios?",
+        options: ["Salomão", "Saul", "Josias", "Ezequias"],
+        answer: "Salomão"
+      },
+      {
+        question: "Qual é o último livro da Bíblia?",
+        options: ["Apocalipse", "Daniel", "Atos", "Revelação"],
+        answer: "Apocalipse"
+      },
+      {
+        question: "Quem liderou os israelitas na conquista de Canaã?",
+        options: ["Josué", "Gideão", "Samuel", "Saul"],
+        answer: "Josué"
+      },
+      {
+        question: "Qual discípulo negou Jesus três vezes?",
+        options: ["Pedro", "João", "Tiago", "André"],
+        answer: "Pedro"
+      }
+    ];
+    
+    let currentQuestion = 0;
+    let score = 0;
+    
+    function loadQuestion() {
+      document.getElementById("result").innerText = "";
+      const questionEl = document.getElementById("question");
+      const optionsEl = document.getElementById("options");
+      questionEl.innerText = quizData[currentQuestion].question;
+      optionsEl.innerHTML = "";
+      quizData[currentQuestion].options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.innerText = option;
+        btn.onclick = () => selectOption(option);
+        optionsEl.appendChild(btn);
+      });
+      document.getElementById("nextButton").style.display = "none";
+    }
+    
+    function selectOption(selected) {
+      const correct = quizData[currentQuestion].answer;
+      if(selected === correct) {
+        score++;
+        document.getElementById("result").innerText = "Resposta correta!";
+        document.getElementById("result").style.color = "lightgreen";
+      } else {
+        document.getElementById("result").innerText = "Resposta errada! A resposta correta é: " + correct;
+        document.getElementById("result").style.color = "tomato";
+      }
+      // Desabilitar os botões após a seleção
+      const options = document.getElementById("options").children;
+      for(let btn of options) {
+        btn.disabled = true;
+      }
+      document.getElementById("nextButton").style.display = "block";
+    }
+    
+    function nextQuestion() {
+      currentQuestion++;
+      if(currentQuestion < quizData.length) {
+        loadQuestion();
+      } else {
+        document.getElementById("quizContainer").innerHTML = "<h2>Quiz Finalizado!</h2><p>Sua pontuação: " + score + " de " + quizData.length + "</p>";
+      }
+    }
+    
+    // Inicia o quiz
+    loadQuestion();
+  </script>
+</body>
+</html>

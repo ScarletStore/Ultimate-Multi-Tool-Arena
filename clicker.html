@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jogo Anti-Estresse - Ultimate Multi-Tool Arena</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body { 
+      font-family: 'Press Start 2P', monospace; 
+      background-color: #121212; 
+      color: #e0e0e0; 
+      text-align: center; 
+      padding: 20px; 
+    }
+    .container { max-width: 600px; margin: auto; }
+    button, a { padding: 15px 30px; background: #6200ea; border: none; border-radius: 5px; color: #fff; margin: 10px; cursor: pointer; transition: background 0.3s; text-decoration: none; }
+    button:hover, a:hover { background: #3700b3; }
+    @media(max-width: 480px) { button, a { padding: 10px 20px; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Jogo Anti-Estresse</h1>
+    <p>Clique para destruir objetos e liberar o estresse!</p>
+    <button id="clickButton" onclick="clickGame()">Clique para Destruir</button>
+    <p>Pontuação: <span id="score">0</span></p>
+    <a href="index.html">Voltar ao Menu</a>
+  </div>
+  <script>
+    let score = 0;
+    function clickGame() {
+      score++;
+      document.getElementById("score").innerText = score;
+      console.log("Clique registrado! Pontuação: " + score);
+    }
+  </script>
+</body>
+</html>
